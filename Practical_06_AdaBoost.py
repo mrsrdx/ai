@@ -1,39 +1,25 @@
-# Practical 6: AdaBoost Ensemble Learning
-
+# 08_AdaBoost.py
+# Supplementary example: the AdaBoost code is blank in the PDF.
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-# Load dataset
 iris = load_iris()
-X = iris.data
-y = iris.target
-
-# Split dataset
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    iris.data, iris.target, test_size=0.2, random_state=42, stratify=iris.target
 )
-
-# Train individual weak classifier
-weak_model = DecisionTreeClassifier(max_depth=1, random_state=42)
-weak_model.fit(X_train, y_train)
-weak_pred = weak_model.predict(X_test)
-weak_accuracy = accuracy_score(y_test, weak_pred)
-
-# Train AdaBoost ensemble
-ada_model = AdaBoostClassifier(
-    estimator=DecisionTreeClassifier(max_depth=1),
-    n_estimators=50,
-    random_state=42
+stump = DecisionTreeClassifier(max_depth=1, random_state=42)
+stump.fit(X_train, y_train)
+# A separate depth-1 tree is used as the ensemble's weak learner.
+model = AdaBoostClassifier(
+    estimator=DecisionTreeClassifier(max_depth=1, random_state=42),
+    n_estimators=50, learning_rate=1.0, random_state=42
 )
-ada_model.fit(X_train, y_train)
-ada_pred = ada_model.predict(X_test)
-ada_accuracy = accuracy_score(y_test, ada_pred)
-
-# Compare performance
-print("Weak Classifier Accuracy:", weak_accuracy)
-print("AdaBoost Accuracy:", ada_accuracy)
-print("AdaBoost Classification Report:")
-print(classification_report(y_test, ada_pred))
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print('Single weak classifier accuracy:', accuracy_score(y_test, stump.predict(X_test)))
+print('AdaBoost accuracy:', accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred, target_names=iris.target_names,
+                            zero_division=0))
