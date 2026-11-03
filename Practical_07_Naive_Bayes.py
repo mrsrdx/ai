@@ -1,35 +1,25 @@
-# Practical 7: Naive Bayes Classifier
-
+# 09_Naive_Bayes.py
+# Corrected example: the PDF mistakenly shows SVM under Naive Bayes.
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
-# Load dataset
 iris = load_iris()
-X = iris.data
-y = iris.target
-
-# Split dataset
+X, y = iris.data, iris.target
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X, y, test_size=0.2, random_state=42, stratify=y
 )
-
-# Create and train Naive Bayes model
 model = GaussianNB()
 model.fit(X_train, y_train)
-
-# Predict test data and calculate probabilities
 y_pred = model.predict(X_test)
-probabilities = model.predict_proba(X_test)
-
-# Evaluate model
-print("Predicted Output:", y_pred)
-print("Class Probabilities:")
-print(probabilities[:5])
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("Confusion Matrix:")
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nConfusion Matrix:')
 print(confusion_matrix(y_test, y_pred))
-print("Classification Report:")
-print(classification_report(y_test, y_pred,
-                            target_names=iris.target_names))
+print('\nClassification Report:')
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+new_flower = [[5.1, 3.5, 1.4, 0.2]]
+prediction = model.predict(new_flower)
+print('Predicted class:', iris.target_names[prediction[0]])
+print('Class order:', iris.target_names[model.classes_])
+print('Class probabilities:', model.predict_proba(new_flower))
